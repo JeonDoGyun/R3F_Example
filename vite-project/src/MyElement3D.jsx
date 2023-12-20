@@ -1,38 +1,34 @@
-import { useRef } from "react";
-import { OrbitControls } from "@react-three/drei";
+import {
+  MeshDiscardMaterial,
+  OrbitControls,
+  shaderMaterial,
+} from "@react-three/drei";
+import { extend } from "@react-three/fiber";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+
+const SimpleMaterial = new shaderMaterial(
+  {
+    uColor: new THREE.Color(1, 0, 0),
+  },
+  `shader code(position)`,
+  `shader code(fragment)`
+);
+
+// 함수를 jsx에서 사용하기 위한 방식
+extend({ SimpleMaterial });
 
 const MyElement3D = () => {
-  const refMesh = useRef();
-
-  useFrame((state, delta) => {
-    refMesh.current.rotation.z += delta;
-  });
-
   return (
     <>
-      <directionalLight position={[1, 1, 1]} />
-      {/* 월드 좌표계 */}
-      <axesHelper scale={10} />
       <OrbitControls />
 
-      <mesh
-        ref={refMesh}
-        position-y={2}
-        rotation-z={THREE.MathUtils.degToRad(45)}
-        scale={[2, 1, 1]}
-      >
-        <boxGeometry />
-        <meshStandardMaterial color="#e67e22" opacity={0} />
+      <ambientLight intensity={1} />
+      <directionalLight position={[0, 1, 0]} />
+      <directionalLight position={[1, 2, 8]} intensity={0.7} />
 
-        {/* mesh의 로컬 좌표계 */}
-        <axesHelper />
-        <mesh scale={[0.1, 0.1, 0.1]} position-y={2}>
-          <sphereGeometry />
-          <meshStandardMaterial color="red" />
-          <axesHelper scale={5} />
-        </mesh>
+      <mesh>
+        <torusGeometry />
+        <simpleMaterial uColor="green" />
       </mesh>
     </>
   );
